@@ -13,6 +13,7 @@ from langgraph.graph import StateGraph, START, END
 
 from src.state import SchedulingState, Order, Machine, Allocation
 from src.llm_client import ask_llm_structured, LLMOutputError
+from src.guardrail import guardrail_agent
 
 
 PLANNER_SYSTEM_PROMPT = (
@@ -103,10 +104,12 @@ def build_graph():
 
     builder.add_node("planner", planner_agent)
     builder.add_node("resource", resource_agent)
+    builder.add_node("guardrail", guardrail_agent)
 
     builder.add_edge(START, "planner")
     builder.add_edge("planner", "resource")
-    builder.add_edge("resource", END)
+    builder.add_edge("resource", "guardrail")
+    builder.add_edge("guardrail", END)
 
     return builder.compile()
 
@@ -148,4 +151,8 @@ if __name__ == "__main__":
 
     print("\n=== Proposed Allocations ===")
     for alloc in result["proposed_allocations"]:
+        print(alloc)
+
+    print("\n=== Final Allocations (after Guardrail) ===")
+    for alloc in result["final_allocations"]:
         print(alloc)
