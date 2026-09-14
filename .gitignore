@@ -4,3 +4,5 @@ __pycache__/
 .env
 *.db
 .streamlit/
+.agents/skills/developing-with-streamlit
+.claude/skills/developing-with-streamlit
