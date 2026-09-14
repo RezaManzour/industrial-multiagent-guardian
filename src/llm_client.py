@@ -21,6 +21,8 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from pydantic import BaseModel, ValidationError
 
+from src.db import log_llm_call
+
 load_dotenv()
 
 T = TypeVar("T", bound=BaseModel)
@@ -187,6 +189,16 @@ def ask_llm_structured(
         )
 
     raw_content = response.choices[0].message.content
+
+    # Log token usage for cost tracking (never let logging failures crash
+    # the pipeline - log_llm_call already swallows its own exceptions).
+    if response.usage:
+        log_llm_call(
+            provider=resolved_provider,
+            model=model,
+            prompt_tokens=response.usage.prompt_tokens,
+            completion_tokens=response.usage.completion_tokens,
+        )
 
     # Defensive cleanup: strip markdown code fences if the model added them
     # despite instructions not to.

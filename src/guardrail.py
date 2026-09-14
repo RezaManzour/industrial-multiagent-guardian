@@ -20,6 +20,7 @@ Rules enforced (in order; first violated rule determines rejection):
 """
 
 from src.state import SchedulingState, Order, Machine, Allocation
+from src.db import log_allocation_decision
 
 
 def _find_order(orders: list[Order], order_id: str) -> Order | None:
@@ -172,6 +173,15 @@ def guardrail_agent(state: SchedulingState) -> dict:
             proposal, state["orders"], state["machines"], final
         )
         final.append(decided)
+
+        log_allocation_decision(
+            order_id=decided.order_id,
+            machine_id=decided.machine_id,
+            start_hour=decided.start_hour,
+            end_hour=decided.end_hour,
+            status=decided.status,
+            rejection_reason=decided.rejection_reason,
+        )
 
         if decided.status == "approved":
             approved_order_ids.add(decided.order_id)
