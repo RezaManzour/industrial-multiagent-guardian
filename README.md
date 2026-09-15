@@ -2,6 +2,8 @@
 
 A multi-agent industrial scheduling system built with LangGraph, featuring a **deterministic, rule-based safety layer** that has final authority over every decision — regardless of what the underlying LLM proposes.
 
+**🔗 Live demo:** https://industrial-multiagent-guardian-29dzxxjmrktabfuybthnrq.streamlit.app/
+
 ## Motivation
 
 LLM-based agents are increasingly used for planning and scheduling tasks, but relying on an LLM to *also* enforce safety and business-rule compliance is fragile: language models can hallucinate, misread constraints, or simply be inconsistent. This project explores an alternative architecture where the LLM is used strictly for **planning and narration**, while a separate, fully deterministic Python module holds exclusive authority to approve or reject any action.
@@ -80,6 +82,8 @@ streamlit run src/dashboard.py
 ```
 
 Shows approval/rejection stats, per-decision detail, and LLM token usage/cost (currently $0, since the default model is free-tier).
+
+**Note on deployment:** this project was originally planned for Hugging Face Spaces, but as of ~July 2026, HF Spaces' Docker SDK (required for Streamlit apps, since the native Streamlit SDK was deprecated) is paid-only for free personal accounts. The dashboard is instead deployed on [Streamlit Community Cloud](https://streamlit.io/cloud), which required zero code changes.
 
 ### Run the tests
 
