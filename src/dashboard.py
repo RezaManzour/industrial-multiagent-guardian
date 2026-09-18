@@ -1,3 +1,4 @@
+import altair as alt
 """
 Streamlit dashboard for the Industrial Multi-Agent Guardian project.
 
@@ -72,8 +73,23 @@ if total_decisions:
     chart_data = pd.DataFrame({
         "status": ["approved", "rejected"],
         "count": [approved_count, rejected_count],
-    }).set_index("status")
-    st.bar_chart(chart_data)
+    })
+    max_count = max(approved_count, rejected_count, 1)
+    chart = (
+        alt.Chart(chart_data)
+        .mark_bar()
+        .encode(
+            x=alt.X("status:N", title=None),
+            y=alt.Y(
+                "count:Q",
+                title="Count",
+                axis=alt.Axis(tickMinStep=1, format="d"),
+                scale=alt.Scale(domain=[0, max_count]),
+            ),
+            color=alt.Color("status:N", legend=None),
+        )
+    )
+    st.altair_chart(chart, width="stretch")
 else:
     st.info("No allocation decisions logged yet. Run `python3 -m src.graph` to generate some.")
 
