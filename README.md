@@ -14,6 +14,18 @@ A companion project (in progress) performs an adversarial/safety evaluation of t
 
 ## Architecture
 
+```
++-------------+     +--------------+     +-----------------------+
+|   Planner   |---->|   Resource   |---->|      Guardrail        |
+|   Agent     |     |   Agent      |     |  (rule-based, no LLM) |
+|  (LLM call) |     | (aggregates) |     |  final approve/reject |
++-------------+     +--------------+     +-----------------------+
+       |                                            |
+       v                                            v
+  agent_log (narration only,              final_allocations
+  never used for decisions)          (the only authoritative output)
+```
+
 The graph is orchestrated with **LangGraph**'s `StateGraph`: `START → planner → resource → guardrail → END`.
 
 ### Design principle: the LLM never decides
@@ -97,13 +109,39 @@ python3 -m pytest tests/ -v
 
 ## Project Structure
 
+```
+industrial-multiagent-guardian/
++-- src/
+|   +-- state.py       # Pydantic schemas: Order, Machine, Allocation, SchedulingState
+|   +-- llm_client.py  # Provider-agnostic LLM client with structured-output validation
+|   +-- graph.py        # LangGraph StateGraph: Planner, Resource, Guardrail nodes
+|   +-- guardrail.py    # Deterministic rule-based safety layer (no LLM)
+|   +-- db.py            # SQLite logging (LLM calls + allocation decisions)
+|   +-- dashboard.py     # Streamlit observability dashboard
++-- tests/
+|   +-- test_guardrail.py              # Unit tests for individual rules
+|   +-- test_end_to_end_rejection.py   # Adversarial end-to-end scenarios
++-- requirements.txt
+```
+
+
 ## Sample Output
+
+```
+=== Agent Log ===
+[Planner] Proposed allocation for ORD-1: M2 (0-2)
+[Planner] Proposed allocation for ORD-2: M1 (0-2)
+[Resource] Current proposed load by machine: M2: 1 order(s), M1: 1 order(s)
+[Guardrail] APPROVED ORD-1 -> M2 (0-2)
+[Guardrail] APPROVED ORD-2 -> M1 (0-2)
+```
+
 
 ## Limitations & Future Work
 
 - The current scenario handles single-capacity machines and a small order set; scaling to larger batches and multi-slot capacity has not yet been load-tested.
 - The Planner Agent currently proposes allocations independently per order rather than jointly optimizing across the full order set.
-- Deployment to Hugging Face Spaces and a full adversarial safety evaluation (Project 2) are in progress.
+- A full adversarial safety evaluation of this system (Project 2), methodologically grounded in AgentDojo, is in progress as a companion project.
 
 ## Related Work
 
