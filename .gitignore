@@ -6,3 +6,4 @@ __pycache__/
 .streamlit/
 .agents/skills/developing-with-streamlit
 .claude/skills/developing-with-streamlit
+.pytest_cache/
