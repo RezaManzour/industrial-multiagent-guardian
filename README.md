@@ -141,12 +141,12 @@ industrial-multiagent-guardian/
 
 - The current scenario handles single-capacity machines and a small order set; scaling to larger batches and multi-slot capacity has not yet been load-tested.
 - The Planner Agent currently proposes allocations independently per order rather than jointly optimizing across the full order set.
-- A full adversarial safety evaluation of this system (Project 2), methodologically grounded in AgentDojo, is in progress as a companion project.
+- A full adversarial safety evaluation of this system (Project 2) is complete: the Guardrail held in 25/30 adversarial runs (83%), with one genuine rule-coverage gap found and documented. See [industrial-multiagent-guardian-adversarial-eval](https://github.com/RezaManzour/industrial-multiagent-guardian-adversarial-eval).
 
 ## Related Work
 
 - AGrail — guardrail/reasoning separation for LLM agents
-- AgentDojo — adversarial evaluation framework for LLM agents (methodological basis for the companion Project 2)
+- AgentDojo — adversarial evaluation framework for LLM agents (methodological basis for the companion [Project 2](https://github.com/RezaManzour/industrial-multiagent-guardian-adversarial-eval))
 - Manufacturing/FJSP literature on multi-agent scheduling systems
 
 ## License
