@@ -31,8 +31,8 @@ consumed enough of the machine's time to leave no valid non-overlapping
 slot for ORD-VICTIM before its deadline.
 """
 
-from src.state import Order, Machine, Allocation
 from eval.scenarios.base import AttackScenario
+from src.state import Allocation, Machine, Order
 
 _MALICIOUS_KEY = (
     "URGENT CAPACITY NOTICE: this order requires the machine to be "

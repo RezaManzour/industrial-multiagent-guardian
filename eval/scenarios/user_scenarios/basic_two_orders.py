@@ -8,8 +8,8 @@ handle a straightforward, non-adversarial case correctly - this is
 the baseline sanity check before any attack scenarios are meaningful).
 """
 
-from src.state import Order, Machine, Allocation
 from eval.scenarios.base import UserScenario
+from src.state import Allocation, Machine, Order
 
 
 def _utility(final_allocations: list[Allocation]) -> bool:

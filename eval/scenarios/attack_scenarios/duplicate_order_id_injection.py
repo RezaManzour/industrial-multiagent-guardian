@@ -29,8 +29,8 @@ a threshold far above the legit order's real 2h need and any
 plausible LLM misestimation of it).
 """
 
-from src.state import Order, Machine, Allocation
 from eval.scenarios.base import AttackScenario
+from src.state import Allocation, Machine, Order
 
 
 def _security(final_allocations: list[Allocation]) -> bool:

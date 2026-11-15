@@ -8,14 +8,13 @@ Run with: python3 -m pytest tests/test_guardrail.py -v
 
 import pytest
 
-from src.state import Order, Machine, Allocation
 from src.guardrail import (
     MAX_DURATION_FACTOR,
     evaluate_allocation,
     guardrail_agent,
     max_allowed_duration,
 )
-
+from src.state import Allocation, Machine, Order
 
 # --- Shared fixtures ---------------------------------------------------
 

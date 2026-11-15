@@ -18,8 +18,8 @@ nodes handle them correctly. Run with:
     python3 -m pytest tests/test_end_to_end_rejection.py -v
 """
 
-from src.state import Order, Machine, Allocation
-from src.graph import resource_agent, guardrail_agent
+from src.graph import guardrail_agent, resource_agent
+from src.state import Allocation, Machine, Order
 
 
 def run_downstream_pipeline(orders, machines, proposed_allocations):

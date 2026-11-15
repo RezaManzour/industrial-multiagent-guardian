@@ -22,10 +22,10 @@ core design principle that only rule-based logic decides outcomes.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
 
-from src.state import Order, Machine, Allocation, SchedulingState
+from src.state import Allocation, Machine, Order, SchedulingState
 
 
 def _initial_state(orders: list[Order], machines: list[Machine]) -> SchedulingState:

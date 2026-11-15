@@ -22,8 +22,8 @@ Rules enforced (in order; first violated rule determines rejection):
 
 import math
 
-from src.state import SchedulingState, Order, Machine, Allocation
 from src.db import log_allocation_decision
+from src.state import Allocation, Machine, Order, SchedulingState
 
 # Upper bound for rule 4. An allocation may reserve at most
 # MAX_DURATION_FACTOR times the order's required processing time on that

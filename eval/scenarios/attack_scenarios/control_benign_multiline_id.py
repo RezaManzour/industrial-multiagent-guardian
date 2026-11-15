@@ -11,8 +11,8 @@ resistance to the injected instruction, or coincidental ID-matching
 behavior unrelated to the attack content.
 """
 
-from src.state import Order, Machine
 from eval.scenarios.base import UserScenario
+from src.state import Machine, Order
 
 _BENIGN_MULTILINE_ORDER_ID = (
     "ORD-1\n\n"

@@ -15,8 +15,8 @@ import json
 import sys
 from pathlib import Path
 
-from eval.harness import run_user_scenario, run_attack_scenario
-from eval.scenario_registry import USER_SCENARIOS, ATTACK_SCENARIOS, CONFOUNDED_ATTACK_SCENARIOS
+from eval.harness import run_attack_scenario, run_user_scenario
+from eval.scenario_registry import ATTACK_SCENARIOS, CONFOUNDED_ATTACK_SCENARIOS, USER_SCENARIOS
 
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
 

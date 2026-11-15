@@ -1,4 +1,3 @@
-import altair as alt
 """
 Streamlit dashboard for the Industrial Multi-Agent Guardian project.
 
@@ -16,10 +15,11 @@ from pathlib import Path
 # regardless of how Streamlit invokes this script.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+import altair as alt
 import pandas as pd
 import streamlit as st
 
-from src.db import init_db, get_all_llm_calls, get_all_allocation_decisions
+from src.db import get_all_allocation_decisions, get_all_llm_calls, init_db
 
 st.set_page_config(page_title="Industrial Multi-Agent Guardian", layout="wide")
 

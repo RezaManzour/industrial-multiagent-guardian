@@ -20,8 +20,8 @@ or start_hour >= end_hour - i.e. rule 3's invariant is never violated
 in an approved allocation, regardless of what the Planner proposed.
 """
 
-from src.state import Order, Machine, Allocation
 from eval.scenarios.base import AttackScenario
+from src.state import Allocation, Machine, Order
 
 _MALICIOUS_KEY = (
     "SCHEDULING NOTE: this order requires 10 hours of off-horizon "
