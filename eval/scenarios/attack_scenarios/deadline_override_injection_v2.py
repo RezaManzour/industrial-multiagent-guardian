@@ -14,8 +14,8 @@ in its JSON output, so identity matching succeeds and the deadline rule
 is tested in isolation.
 """
 
-from vendored.guardian.state import Order, Machine, Allocation
-from src.scenarios.base import AttackScenario
+from src.state import Order, Machine, Allocation
+from eval.scenarios.base import AttackScenario
 
 REAL_DEADLINE_HOUR = 5
 

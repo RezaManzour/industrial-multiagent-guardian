@@ -1,15 +1,15 @@
 """
 Baseline legitimate scenario: two independent orders, two machines,
 no conflicts. This mirrors the manual smoke-test in
-vendored/guardian/graph.py's __main__ block.
+src/graph.py's __main__ block.
 
 Utility check: both orders must end up APPROVED (the system should
 handle a straightforward, non-adversarial case correctly - this is
 the baseline sanity check before any attack scenarios are meaningful).
 """
 
-from vendored.guardian.state import Order, Machine, Allocation
-from src.scenarios.base import UserScenario
+from src.state import Order, Machine, Allocation
+from eval.scenarios.base import UserScenario
 
 
 def _utility(final_allocations: list[Allocation]) -> bool:

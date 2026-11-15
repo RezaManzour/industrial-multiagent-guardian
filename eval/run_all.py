@@ -1,9 +1,13 @@
 """
 Runs every scenario in the registry N times each, prints a summary
-table, and writes raw per-run results to results/raw_runs.json for
-RESULTS.md to be built from.
+table, and writes raw per-run results to a JSON file.
 
-Usage: python3 run_all.py [--runs N]
+Run from the repository root (needs an LLM API key in .env):
+    python3 -m eval.run_all --runs 5
+
+By default results go to eval/results/latest_runs.json, so a rerun never
+overwrites eval/results/raw_runs.json, which holds the original
+pre-fix runs that RESULTS.md is built from.
 """
 
 import argparse
@@ -11,8 +15,8 @@ import json
 import sys
 from pathlib import Path
 
-from src.harness import run_user_scenario, run_attack_scenario
-from src.scenario_registry import USER_SCENARIOS, ATTACK_SCENARIOS, CONFOUNDED_ATTACK_SCENARIOS
+from eval.harness import run_user_scenario, run_attack_scenario
+from eval.scenario_registry import USER_SCENARIOS, ATTACK_SCENARIOS, CONFOUNDED_ATTACK_SCENARIOS
 
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
 
@@ -41,6 +45,12 @@ def _run_many(scenario, run_fn, n):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs", type=int, default=5)
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=RESULTS_DIR / "latest_runs.json",
+        help="Where to write raw per-run results (default: eval/results/latest_runs.json)",
+    )
     args = parser.parse_args()
 
     all_results = {"user_scenarios": {}, "attack_scenarios": {}, "confounded_attack_scenarios": {}}
@@ -57,12 +67,12 @@ def main():
     for s in CONFOUNDED_ATTACK_SCENARIOS:
         all_results["confounded_attack_scenarios"][s.scenario_id] = _run_many(s, run_attack_scenario, args.runs)
 
-    RESULTS_DIR.mkdir(exist_ok=True)
-    out_path = RESULTS_DIR / "raw_runs.json"
+    out_path = args.out
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(all_results, f, indent=2)
 
-    print(f"\n=== Summary (pass rate = utility for user scenarios, security-held rate for attack scenarios) ===")
+    print("\n=== Summary (pass rate = utility for user scenarios, security-held rate for attack scenarios) ===")
     for category, scenarios in all_results.items():
         print(f"\n-- {category} --")
         for scenario_id, outcomes in scenarios.items():

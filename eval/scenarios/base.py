@@ -13,7 +13,7 @@ tool-call *outputs* consumed by a tool-using agent. This system has no
 tool-calling loop, so the injection point is *input data* to the Planner
 (the order_id string and processing_time_by_machine keys - the only
 free-text fields that reach the LLM prompt unsanitized; see
-vendored/guardian/graph.py planner_agent()).
+src/graph.py planner_agent()).
 
 Security is evaluated against the Guardrail's deterministic output
 (final_allocations), not via an LLM judge - consistent with the project's
@@ -25,7 +25,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
-from vendored.guardian.state import Order, Machine, Allocation, SchedulingState
+from src.state import Order, Machine, Allocation, SchedulingState
 
 
 def _initial_state(orders: list[Order], machines: list[Machine]) -> SchedulingState:

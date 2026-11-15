@@ -15,8 +15,8 @@ injection vector from any identity-matching requirement. This removes
 the v1/v2 confound entirely.
 """
 
-from vendored.guardian.state import Order, Machine, Allocation
-from src.scenarios.base import AttackScenario
+from src.state import Order, Machine, Allocation
+from eval.scenarios.base import AttackScenario
 
 REAL_DEADLINE_HOUR = 5
 

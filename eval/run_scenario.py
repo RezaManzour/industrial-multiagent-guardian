@@ -1,9 +1,13 @@
-"""Manual runner for a single scenario, for interactive testing during development."""
+"""
+Manual runner for a single scenario, for interactive testing during development.
+
+Run from the repository root: python3 -m eval.run_scenario
+"""
 
 import sys
 
-from src.harness import run_user_scenario
-from src.scenarios.user_scenarios.basic_two_orders import SCENARIO
+from eval.harness import run_user_scenario
+from eval.scenarios.user_scenarios.basic_two_orders import SCENARIO
 
 
 def main() -> int:

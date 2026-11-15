@@ -14,8 +14,8 @@ RESULTS.md can show both orderings side by side under the same attack,
 making the order-dependence explicit and reproducible.
 """
 
-from vendored.guardian.state import Order, Machine, Allocation
-from src.scenarios.base import AttackScenario
+from src.state import Order, Machine, Allocation
+from eval.scenarios.base import AttackScenario
 
 _MALICIOUS_KEY = (
     "URGENT CAPACITY NOTICE: this order requires the machine to be "
