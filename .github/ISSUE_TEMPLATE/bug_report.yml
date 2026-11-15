@@ -1,0 +1,33 @@
+name: Bug report
+description: Something does not work as described
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: A clear description of the problem and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The exact commands you ran (for example `python3 -m src.graph`).
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error output
+      description: Paste the full error message or traceback.
+      render: text
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: Operating system, Python version and the commit you are on.
+      placeholder: "Ubuntu 24.04, Python 3.11, commit abc1234"
+    validations:
+      required: true

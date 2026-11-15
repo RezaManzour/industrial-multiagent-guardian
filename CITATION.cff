@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software or its evaluation, please cite it as below."
+title: "Industrial Multi-Agent Guardian: an LLM scheduling pipeline with a deterministic guardrail and an adversarial evaluation"
+type: software
+authors:
+  - family-names: Manzour
+    given-names: Reza
+repository-code: "https://github.com/RezaManzour/industrial-multiagent-guardian"
+url: "https://industrial-multiagent-guardian-29dzxxjmrktabfuybthnrq.streamlit.app/"
+license: MIT
+date-released: "2026-11-15"
+keywords:
+  - llm-agents
+  - guardrails
+  - ai-safety
+  - langgraph
+  - adversarial-evaluation
+  - scheduling
