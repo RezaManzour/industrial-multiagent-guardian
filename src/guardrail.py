@@ -13,14 +13,38 @@ Rules enforced (in order; first violated rule determines rejection):
   2. machine_id must reference a real machine in the current state
   3. start_hour must be >= 0 and strictly less than end_hour
   4. the allocated duration must cover the order's required processing
-     time on that machine (no under-allocating time)
+     time on that machine (no under-allocating time), and must not exceed
+     it by more than MAX_DURATION_FACTOR (no over-allocating time)
   5. end_hour must not exceed the order's deadline_hour
   6. the allocation must not exceed the machine's capacity at any
      overlapping time slot (checked against already-approved allocations)
 """
 
+import math
+
 from src.state import SchedulingState, Order, Machine, Allocation
 from src.db import log_allocation_decision
+
+# Upper bound for rule 4. An allocation may reserve at most
+# MAX_DURATION_FACTOR times the order's required processing time on that
+# machine (rounded up to whole hours, since allocations use integer hours).
+#
+# Why this exists: the adversarial evaluation in eval/ (scenario
+# goal_hijack_resource_hogging_v2, eval/RESULTS.md) showed that rule 4
+# originally had only a lower bound. An order whose data talked the LLM
+# Planner into reserving a shared machine for 24h despite needing 1h was
+# approved, and a legitimate competing order was then rejected for
+# capacity. With this bound, that reservation is rejected by rule 4.
+MAX_DURATION_FACTOR = 1.5
+
+
+def max_allowed_duration(
+    required_hours: float, factor: float = MAX_DURATION_FACTOR
+) -> int:
+    """Longest allocation (in whole hours) rule 4 accepts for an order."""
+    if factor < 1:
+        raise ValueError(f"max duration factor must be >= 1, got {factor}")
+    return math.ceil(required_hours * factor)
 
 
 def _find_order(orders: list[Order], order_id: str) -> Order | None:
@@ -55,6 +79,7 @@ def evaluate_allocation(
     orders: list[Order],
     machines: list[Machine],
     already_approved: list[Allocation],
+    max_duration_factor: float = MAX_DURATION_FACTOR,
 ) -> Allocation:
     """
     Apply all 6 rules to a single proposed allocation and return a new
@@ -108,6 +133,20 @@ def evaluate_allocation(
             }
         )
 
+    max_duration = max_allowed_duration(required_hours, max_duration_factor)
+    if allocated_duration > max_duration:
+        return allocation.model_copy(
+            update={
+                "status": "rejected",
+                "rejection_reason": (
+                    f"Allocated duration ({allocated_duration}h) exceeds the "
+                    f"maximum allowed for this order ({max_duration}h = "
+                    f"{required_hours}h required x {max_duration_factor}, "
+                    f"rounded up)"
+                ),
+            }
+        )
+
     if allocation.end_hour > order.deadline_hour:
         return allocation.model_copy(
             update={
@@ -119,8 +158,13 @@ def evaluate_allocation(
             }
         )
 
+    # Only allocations that were actually approved hold capacity. The graph
+    # node passes every decision made so far (approved and rejected), and a
+    # rejected proposal must not block a later legitimate one.
     approved_on_this_machine = [
-        a for a in already_approved if a.machine_id == allocation.machine_id
+        a
+        for a in already_approved
+        if a.machine_id == allocation.machine_id and a.status == "approved"
     ]
     concurrent = _concurrent_count_at_overlap(approved_on_this_machine, allocation)
     if concurrent + 1 > machine.capacity:

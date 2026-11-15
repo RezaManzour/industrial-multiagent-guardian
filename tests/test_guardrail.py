@@ -9,7 +9,12 @@ Run with: python3 -m pytest tests/test_guardrail.py -v
 import pytest
 
 from src.state import Order, Machine, Allocation
-from src.guardrail import evaluate_allocation, guardrail_agent
+from src.guardrail import (
+    MAX_DURATION_FACTOR,
+    evaluate_allocation,
+    guardrail_agent,
+    max_allowed_duration,
+)
 
 
 # --- Shared fixtures ---------------------------------------------------
@@ -130,6 +135,94 @@ def test_non_overlapping_allocations_on_same_machine_both_approved():
     result = evaluate_allocation(non_overlapping_alloc, orders, machines, already_approved)
 
     assert result.status == "approved"
+
+
+def test_rejected_allocation_does_not_consume_capacity():
+    # guardrail_agent passes every earlier decision (approved and rejected)
+    # as already_approved. A rejected proposal must not block the machine.
+    orders = [
+        make_order(order_id="ORD-1", proc_time={"M1": 2.0}),
+        make_order(order_id="ORD-2", proc_time={"M1": 2.0}),
+    ]
+    machines = [make_machine(machine_id="M1", capacity=1)]
+
+    earlier = [make_allocation(order_id="ORD-1", machine_id="M1", start=0, end=2, status="rejected")]
+    alloc = make_allocation(order_id="ORD-2", machine_id="M1", start=0, end=2)
+
+    result = evaluate_allocation(alloc, orders, machines, earlier)
+
+    assert result.status == "approved"
+
+
+# --- Rule 4 upper bound (max allocation duration) -----------------------
+#
+# Added after the adversarial evaluation (eval/, scenario
+# goal_hijack_resource_hogging_v2) found that rule 4 had no maximum: an
+# order needing 1h could reserve a shared machine for 24h.
+
+def test_over_allocation_far_beyond_requirement_is_rejected():
+    orders = [make_order(proc_time={"M1": 1.0}, deadline_hour=24)]
+    machines = [make_machine()]
+    alloc = make_allocation(start=0, end=24)  # 24h for a 1h job
+
+    result = evaluate_allocation(alloc, orders, machines, already_approved=[])
+
+    assert result.status == "rejected"
+    assert "exceeds the maximum allowed" in result.rejection_reason
+
+
+def test_small_slack_above_requirement_is_still_approved():
+    orders = [make_order(proc_time={"M1": 2.0})]
+    machines = [make_machine()]
+    alloc = make_allocation(start=0, end=3)  # 2h job, 1h of slack (factor 1.5)
+
+    result = evaluate_allocation(alloc, orders, machines, already_approved=[])
+
+    assert result.status == "approved"
+
+
+@pytest.mark.parametrize(
+    ("required", "end", "expected"),
+    [
+        (1.5, 2, "approved"),  # minimum whole-hour slot for a 1.5h job
+        (1.5, 3, "approved"),  # ceil(1.5 * 1.5) = 3 is the upper bound
+        (1.5, 4, "rejected"),  # one hour past the bound
+        (1.0, 2, "approved"),  # ceil(1.0 * 1.5) = 2
+        (1.0, 3, "rejected"),
+    ],
+)
+def test_max_duration_boundaries(required, end, expected):
+    orders = [make_order(proc_time={"M1": required}, deadline_hour=24)]
+    machines = [make_machine()]
+    alloc = make_allocation(start=0, end=end)
+
+    result = evaluate_allocation(alloc, orders, machines, already_approved=[])
+
+    assert result.status == expected
+
+
+def test_max_duration_factor_is_configurable():
+    orders = [make_order(proc_time={"M1": 2.0})]
+    machines = [make_machine()]
+    alloc = make_allocation(start=0, end=3)
+
+    strict = evaluate_allocation(
+        alloc, orders, machines, already_approved=[], max_duration_factor=1.0
+    )
+    lenient = evaluate_allocation(
+        alloc, orders, machines, already_approved=[], max_duration_factor=2.0
+    )
+
+    assert strict.status == "rejected"
+    assert lenient.status == "approved"
+
+
+def test_max_allowed_duration_helper():
+    assert MAX_DURATION_FACTOR == 1.5
+    assert max_allowed_duration(2.0) == 3
+    assert max_allowed_duration(1.5) == 3
+    with pytest.raises(ValueError):
+        max_allowed_duration(2.0, factor=0.5)
 
 
 # --- Full guardrail_agent (graph node) integration test -----------------
