@@ -1,6 +1,10 @@
 # Industrial Multi-Agent Guardian
 
 [![tests](https://github.com/RezaManzour/industrial-multiagent-guardian/actions/workflows/tests.yml/badge.svg)](https://github.com/RezaManzour/industrial-multiagent-guardian/actions/workflows/tests.yml)
+[![Python 3.11 | 3.12 | 3.13](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)](https://www.python.org/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![License: MIT](https://img.shields.io/github/license/RezaManzour/industrial-multiagent-guardian)](LICENSE)
+[![Streamlit demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://industrial-multiagent-guardian-29dzxxjmrktabfuybthnrq.streamlit.app/)
 
 A multi-agent industrial scheduling system built with LangGraph, featuring a **deterministic, rule-based safety layer** that has final authority over every decision — regardless of what the underlying LLM proposes. The repository also contains an **adversarial evaluation** of that claim ([`eval/`](eval/)), which found one real gap in the rules; the gap is fixed in this version (see [Adversarial evaluation: a gap found and fixed](#adversarial-evaluation-a-gap-found-and-fixed)).
 
@@ -200,6 +204,15 @@ industrial-multiagent-guardian/
 - [AgentDojo](https://arxiv.org/abs/2406.13352) (Debenedetti et al., NeurIPS 2024) — adversarial evaluation framework for LLM agents, methodological basis for [`eval/`](eval/)
 - Manufacturing/FJSP literature on multi-agent scheduling systems
 
+## Citing
+
+Please cite this repository with the metadata in [`CITATION.cff`](CITATION.cff) (the **Cite this repository** button on GitHub).
+
+## Contributing
+
+Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md).
+Security problems: see [SECURITY.md](SECURITY.md).
+
 ## License
 
-MIT
+[MIT](LICENSE)
