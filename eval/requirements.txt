@@ -1,0 +1,4 @@
+langgraph==1.2.11
+openai==3.16.2
+pydantic==2.13.5
+python-dotenv==1.2.3
