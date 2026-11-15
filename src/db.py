@@ -15,7 +15,7 @@ Two tables:
 """
 
 import sqlite3
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 DB_PATH = Path(__file__).resolve().parent.parent / "guardian_log.db"
@@ -85,7 +85,7 @@ def log_llm_call(provider: str, model: str, prompt_tokens: int, completion_token
             conn.execute(
                 "INSERT INTO llm_calls (timestamp, provider, model, prompt_tokens, completion_tokens, estimated_cost_usd) "
                 "VALUES (?, ?, ?, ?, ?, ?)",
-                (datetime.now(timezone.utc).isoformat(), provider, model, prompt_tokens, completion_tokens, cost),
+                (datetime.now(UTC).isoformat(), provider, model, prompt_tokens, completion_tokens, cost),
             )
             conn.commit()
         finally:
@@ -106,7 +106,7 @@ def log_allocation_decision(
                 "INSERT INTO allocation_decisions "
                 "(timestamp, order_id, machine_id, start_hour, end_hour, status, rejection_reason) "
                 "VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (datetime.now(timezone.utc).isoformat(), order_id, machine_id, start_hour, end_hour, status, rejection_reason),
+                (datetime.now(UTC).isoformat(), order_id, machine_id, start_hour, end_hour, status, rejection_reason),
             )
             conn.commit()
         finally:

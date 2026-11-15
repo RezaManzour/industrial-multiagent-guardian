@@ -11,7 +11,8 @@ logic (safety or otherwise) lives here - that belongs in src/guardrail.py
 (rule-based) and src/graph.py (agent orchestration).
 """
 
-from typing import TypedDict, Literal
+from typing import Literal, TypedDict
+
 from pydantic import BaseModel, Field
 
 

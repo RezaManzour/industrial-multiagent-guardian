@@ -15,10 +15,10 @@ Provider is selected via the LLM_PROVIDER environment variable.
 
 import json
 import os
-from typing import Type, TypeVar
+from typing import TypeVar
 
-from openai import OpenAI
 from dotenv import load_dotenv
+from openai import OpenAI
 from pydantic import BaseModel, ValidationError
 
 from src.db import log_llm_call
@@ -122,7 +122,7 @@ def ask_llm(
 
 def ask_llm_structured(
     prompt: str,
-    response_model: Type[T],
+    response_model: type[T],
     system_prompt: str | None = None,
     provider: str | None = None,
     temperature: float = 0.2,

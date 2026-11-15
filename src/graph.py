@@ -9,12 +9,11 @@ That authority belongs exclusively to the rule-based Guardrail layer
 together the "planning/narration" side of the system.
 """
 
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import END, START, StateGraph
 
-from src.state import SchedulingState, Order, Machine, Allocation
-from src.llm_client import ask_llm_structured, LLMOutputError
 from src.guardrail import guardrail_agent
-
+from src.llm_client import LLMOutputError, ask_llm_structured
+from src.state import Allocation, Machine, Order, SchedulingState
 
 PLANNER_SYSTEM_PROMPT = (
     "You are a Planner Agent in an industrial scheduling system. "
